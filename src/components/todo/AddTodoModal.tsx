@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -10,8 +11,30 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { FormEvent, useState } from "react";
+import { useAppDispatch } from "@/redux/hook";
+import { addTodo } from "@/redux/features/TodoSlice";
 
 const AddTodoModal = () => {
+  const [task, setTask] = useState("");
+  const [description, setDescription] = useState("");
+
+  const dispatch = useAppDispatch();
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const randomString = Math.random().toString(36).substring(2, 7);
+
+    const taskDetails = {
+      id: randomString,
+      title: task,
+      description: description,
+    };
+
+    dispatch(addTodo(taskDetails));
+  };
+
   return (
     <div>
       <Dialog>
@@ -20,36 +43,40 @@ const AddTodoModal = () => {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
+            <DialogTitle>Add Your Task</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+              Add your task that you want to finish ..
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
+          <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="task" className="text-start ">
+                Task
               </Label>
               <Input
-                id="name"
-                defaultValue="Pedro Duarte"
-                className="col-span-3"
+                onChange={(e) => setTask(e.target.value)}
+                id="task"
+                placeholder="write you task"
+                className="border border-slate-600 focus:border-blue-400 focus:outline-0  "
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="description" className="ext-start">
+                Description
               </Label>
               <Input
-                id="username"
-                defaultValue="@peduarte"
-                className="col-span-3"
+                onChange={(e) => setDescription(e.target.value)}
+                id="description"
+                placeholder="write description"
+                className="border border-slate-600 focus:border-blue-400 focus:outline-0 h-16 "
               />
             </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit">Save changes</Button>
-          </DialogFooter>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="submit">Submit</Button>
+              </DialogClose>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

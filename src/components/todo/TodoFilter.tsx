@@ -17,10 +17,10 @@ const TodoFilter = () => {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary">Open</Button>
+          <Button className="bg-primary-gradient">Filter</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
+          <DropdownMenuLabel>Filter by Priority</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
             <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
