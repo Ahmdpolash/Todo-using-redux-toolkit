@@ -12,27 +12,48 @@ import {
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { FormEvent, useState } from "react";
-import { useAppDispatch } from "@/redux/hook";
-import { addTodo } from "@/redux/features/TodoSlice";
+import { useAddTodosMutation } from "@/redux/api/api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+// import { useAppDispatch } from "@/redux/hook";
+// import { addTodo } from "@/redux/features/TodoSlice";
 
 const AddTodoModal = () => {
   const [task, setTask] = useState("");
   const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("");
 
-  const dispatch = useAppDispatch();
+  //! for local state
+  // const dispatch = useAppDispatch();
+
+  //* for server
+  const [addTodo] = useAddTodosMutation();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    const randomString = Math.random().toString(36).substring(2, 7);
+    // const randomString = Math.random().toString(36).substring(2, 7);
 
     const taskDetails = {
-      id: randomString,
+      // id: randomString,
       title: task,
+      isCompleted: false,
       description: description,
+      priority: priority,
     };
 
-    dispatch(addTodo(taskDetails));
+    console.log("inside modal", taskDetails);
+
+    //! for local state
+    // dispatch(addTodo(taskDetails));
+
+    //* for server
+    addTodo(taskDetails);
   };
 
   return (
@@ -70,6 +91,22 @@ const AddTodoModal = () => {
                 placeholder="write description"
                 className="border border-slate-600 focus:border-blue-400 focus:outline-0 h-16 "
               />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="description" className="ext-start">
+                Priority
+              </Label>
+
+              <Select onValueChange={(value) => setPriority(value)}>
+                <SelectTrigger className="w-full border border-slate-600 focus:border-blue-400 focus:outline-0">
+                  <SelectValue placeholder="Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <DialogFooter>
               <DialogClose asChild>
