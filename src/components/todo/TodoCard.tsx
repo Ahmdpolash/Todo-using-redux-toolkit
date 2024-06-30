@@ -1,9 +1,11 @@
-import { useAppDispatch } from "@/redux/hook";
+// import { useAppDispatch } from "@/redux/hook";
+import { useDeleteTodoMutation, useUpdateTodoMutation } from "@/redux/api/api";
 import { Button } from "../ui/button";
-import { removeTodo, toggleComplete } from "@/redux/features/TodoSlice";
+// import { removeTodo, toggleComplete } from "@/redux/features/TodoSlice";
+import UpdateModal from "./UpdateModal";
 
 type TCardProps = {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   isCompleted?: boolean;
@@ -11,16 +13,38 @@ type TCardProps = {
 };
 
 const TodoCard = ({
-  id,
+  _id,
   title,
   description,
   isCompleted,
   priority,
 }: TCardProps) => {
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
+
+  const [updateTodo] = useUpdateTodoMutation();
+  const [deleteTodo] = useDeleteTodoMutation();
 
   const toogleState = () => {
-    dispatch(toggleComplete(id));
+    const taskData = {
+      title,
+      description,
+      priority,
+      isCompleted: !isCompleted,
+    };
+
+    const options = {
+      id: _id,
+      data: {
+        title,
+        description,
+        priority,
+        isCompleted: !isCompleted,
+      },
+    };
+
+    updateTodo(options);
+
+    // dispatch(toggleComplete(id));
   };
 
   return (
@@ -32,6 +56,7 @@ const TodoCard = ({
           type="checkbox"
           name="complete"
           id="complete"
+          defaultChecked={isCompleted}
         />
         <p className="font-semibold flex-1">{title}</p>
         <div className="flex-1 gap-2 flex items-center">
@@ -51,9 +76,10 @@ const TodoCard = ({
           )}
         </div>
         <p className="flex-[2]">{description}</p>
-        <div className="space-x-5">
+        <div className="space-x-5 flex items-center">
           <Button
-            onClick={() => dispatch(removeTodo(id))}
+            // onClick={() => dispatch(removeTodo(id))}
+            onClick={() => deleteTodo(_id)}
             className="bg-red-500"
           >
             <svg
@@ -71,22 +97,7 @@ const TodoCard = ({
               />
             </svg>
           </Button>
-          <Button className="bg-[#5C53FE]">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-              />
-            </svg>
-          </Button>
+          <UpdateModal />
         </div>
       </div>
     </div>
